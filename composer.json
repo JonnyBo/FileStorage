@@ -1,0 +1,14 @@
+{
+  "name": "jonnybo/FileStorage",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "jonny",
+      "email": "evgeny.e.borisov@gmail.com"
+    }
+  ],
+  "require": {
+  }
+}
