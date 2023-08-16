@@ -2,10 +2,11 @@
   "name": "jonnybo/FileStorage",
   "description": "description",
   "minimum-stability": "stable",
-  "license": "proprietary",
+  "homepage": "https://github.com/JonnyBo/FileStorage",
+  "license": "MIT",
   "authors": [
     {
-      "name": "jonny",
+      "name": "jonnybo",
       "email": "evgeny.e.borisov@gmail.com",
       "role": "Developer"
     }
