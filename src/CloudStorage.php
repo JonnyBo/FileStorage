@@ -2,14 +2,21 @@
 
 namespace jonnybo\FileStorage;
 
+use Yii;
+
 class CloudStorage implements FileStorageInterface
 {
 
     public $ObjectClient;
 
-    public function __construct(\Minio\Object\ObjectClient $ObjectClient)
+    public function __construct($config)
     {
-        $this->ObjectClient = $ObjectClient;
+        \Minio\Autoloader::register();
+        //$this->ObjectClient = new \Minio\Object\ObjectClient($config);
+    }
+
+    public function init($config) {
+        $this->ObjectClient = new \Minio\Object\ObjectClient($config);
     }
 
     /**

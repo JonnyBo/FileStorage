@@ -29,11 +29,17 @@ class FileStorage implements FileStorageInterface
      * Сохранение файла.
      * @return string
      */
-    public function saveFile($object, $file) {
-        if (file_put_contents($object, $file) === false) {
-            return false;
+    public function saveFile($object, $file, $header = []) {
+        if ($content = FileHelper::getFileContent($file)) {
+            return $this->saveContent($object, $content);
         }
-        return $object;
+        if ($result = $this->copy($file, $object)) {
+            return $result;
+        }
+        if ($result = FileHelper::getFileCurl($file, $header, $object)) {
+            return $result;
+        }
+        return false;
     }
 
     /**
@@ -59,13 +65,13 @@ class FileStorage implements FileStorageInterface
      * Удаление файла.
      * @return string
      */
-    public function delete($objects) {
-        if (is_array($objects) && !empty($objects)) {
-            foreach ($objects as $object) {
-                @unlink($object);
+    public function delete($files) {
+        if (is_array($files) && !empty($files)) {
+            foreach ($files as $file) {
+                @unlink($file);
             }
         } else {
-            @unlink($objects);
+            @unlink($files);
         }
     }
 
@@ -73,15 +79,29 @@ class FileStorage implements FileStorageInterface
      * Получить имя файла.
      * @return string
      */
-    public function getName($object) {
-        return basename($object);
+    public function getName($file, $filename = false) {
+        $filename = md5_file($file) . '_' . (($filename) ? $filename : basename($file));
+        return $filename;
     }
 
     /**
      * Получить URL файла.
      * @return string
      */
-    public function getUrl($object) {
-        return str_replace(Yii::$app->basePath . '/web/files', '', $object);
+    public function getUrl($file) {
+        return str_replace(Yii::$app->basePath . '/web/files', '', $file);
     }
+
+    
+
+    public function setFileRule($file) {
+        chmod($file, 0666);
+    }
+
+    public function setDirRule($path) {
+        chmod($path, 0777);
+    }
+    
+    
+
 }
