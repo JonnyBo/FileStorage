@@ -150,7 +150,7 @@ class FileStorage implements FileStorageInterface
      * $useHourDir - bool нужна ли директория с днем и часом
      * $dir - string - папка внутри web/files
      * $keepfilename - bool - добавлять ли в имя файла хеш файла
-     * @return string
+     * @return array
      */
     public function upload($files, $useHourDir = true, $dir = '', $keepfilename = false) {
         try {
