@@ -3,6 +3,7 @@
 namespace jonnybo\FileStorage;
 
 use Yii;
+use yii\db\Exception;
 
 class FileHelper
 {
@@ -36,8 +37,9 @@ class FileHelper
     public static function getPath($dir = '', $useHourDir = true) {
         $path = Yii::$app->basePath . '/web/files';
         $hourdir = '';
-        if ($dir != '')
-            $path .= '/' . $dir;
+        if ($dir !== '')
+            $path = $path . '/' . $dir;
+        self::createDir($path);
         if ($useHourDir) {
             $hourdir = '/' . date('Y-m-d_H');
             self::createDir($path . $hourdir);
@@ -46,9 +48,8 @@ class FileHelper
     }
 
     public static function createDir($dir) {
-        $path = self::getPath($dir);
-        if (!file_exists($path))
-            mkdir($path, 0777);
+        if (!file_exists($dir))
+            mkdir($dir, 0777);
     }
 
     public static function getFileContent($url) {
@@ -72,4 +73,31 @@ class FileHelper
         }
         return false;
     }
+
+    public static function getUploadFileName($files, $keepfilename = false) {
+        if ($keepfilename)
+            $filename = $files->baseName . '.' . $files->extension;
+        else
+            $filename = md5_file($files->tempName) . '_' . $files->baseName . '.' . $files->extension;
+        return $filename;
+    }
+
+    public static function getSaveFileName($file, $filename, $keepfilename = false) {
+        if (!$keepfilename) {
+            $filename = md5_file($file) . '_' . basename($filename);
+        }
+        return $filename;
+    }
+
+    public static function getClearFileName($filename) {
+        return preg_replace("([^\w\s\d\.\-_~,;:\[\]\(\)]|[\.]{2,})", '', $filename);
+    }
+
+    public static function processResult($result) {
+        if (isset($result['error']) && $result['error'])
+            throw new Exception($result['error']);
+        if (isset($result['success']) && $result['success'])
+            return $result['success'];
+    }
+
 }

@@ -8,7 +8,7 @@ interface FileStorageInterface {
      * Проверка существования.
      * @return string
      */
-    public function exist();
+    //public function exist();
 
     /**
      * Сохранение контента.
