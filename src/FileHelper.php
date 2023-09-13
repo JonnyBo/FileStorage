@@ -90,7 +90,7 @@ class FileHelper
     }
 
     public static function getClearFileName($filename) {
-        return preg_replace("([^\w\s\d\.\-_~,;:\[\]\(\)]|[\.]{2,})", '', $filename);
+        return preg_replace('/[^\w\-\._]/u','', $filename);
     }
 
     public static function processResult($result) {
