@@ -3,6 +3,9 @@
 namespace jonnybo\FileStorage;
 
 use Yii;
+use jonnybo\FileStorage\archive\ArchiveRar;
+use jonnybo\FileStorage\archive\ArchiveZip;
+use jonnybo\FileStorage\archive\ArchiveGZ;
 
 class FileStorage implements FileStorageInterface
 {
@@ -29,6 +32,17 @@ class FileStorage implements FileStorageInterface
             }
         }
         return $out;
+    }
+
+    public static function getHashedName($file, $filename = false): string
+    {
+        $hashFile = md5_file($file);
+        $baseName = $filename?:basename($file);
+        if (mb_stripos($baseName, $hashFile) === 0)
+            $filename = $baseName;
+        else
+            $filename = $hashFile . '_' . $baseName;
+        return $filename;
     }
 
     /**
@@ -173,6 +187,50 @@ class FileStorage implements FileStorageInterface
             return $info['dirname'] . '/' . $filename;
         }
         return $file;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function unzipFile($fileaddr, $path = false)
+    {
+        if (!$path)
+            $path = Yii::$app->basePath . '/web/files/archive/' . uniqid();
+        $whitelist = ['zip', 'gz', 'rar'];
+        $arrFile = explode(".", $fileaddr);
+        $ext = array_pop($arrFile);
+
+        $result = [];
+
+        if (in_array($ext, $whitelist)) {
+            if (!file_exists($path)) {
+                if (!mkdir($path, 0777, true)) {
+                    throw new \Exception(str_replace('$dir$', $path, 'Не удается создать директорию $dir$'));
+                }
+            }
+            if ($ext == 'zip') {
+                $result = ArchiveZip::unzip($fileaddr, $path);
+            }
+            if ($ext == 'gz') {
+                $result = ArchiveGZ::unzip($fileaddr, $path);;
+            }
+            if ($ext == 'rar') {
+                $result = ArchiveRAR::unzip($fileaddr, $path);;
+            }
+        } else {
+            //не архив
+            $result = ['path' => Yii::$app->basePath . '/web/files', 'files' => [$fileaddr]];
+        }
+        return $result;
+    }
+
+    public static function getFilenameWithoutHash($fileaddr): string
+    {
+        $path_info = pathinfo($fileaddr);
+        $arrFilename = explode('_', $path_info['basename']);
+        array_shift($arrFilename);
+        $filename = implode('_', $arrFilename);
+        return $filename;
     }
 
 }

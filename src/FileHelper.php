@@ -34,16 +34,25 @@ class FileHelper
         return $out;
     }
 
-    public static function getPath($dir = '', $useHourDir = true) {
+    public static function getPath($dir = '', $useHourDir = 'day', $time = false) {
         $path = Yii::$app->basePath . '/web/files';
         $hourdir = '';
         if ($dir !== '')
             $path = $path . '/' . $dir;
-        self::createDir($path);
-        if ($useHourDir) {
-            $hourdir = '/' . date('Y-m-d_H');
-            self::createDir($path . $hourdir);
+        if (!$time)
+            $time = time();
+        if ($useHourDir == 'hour') {
+            $hourdir = '/' . date('Y-m-d_H', $time);
+        } elseif ($useHourDir === true || $useHourDir == 'day') {
+            $hourdir = '/' . date('Y-m-d', $time);
+        } elseif ($useHourDir == 'week') {
+            $hourdir = '/' . date('Y-W', $time);
+        } elseif ($useHourDir == 'month') {
+            $hourdir = '/' . date('Y-m', $time);
+        } elseif ($useHourDir == 'year') {
+            $hourdir = '/' . date('Y', $time);
         }
+        self::createDir($path . $hourdir);
         return $path . $hourdir;
     }
 
