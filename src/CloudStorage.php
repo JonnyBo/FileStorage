@@ -118,4 +118,14 @@ class CloudStorage implements FileStorageInterface
         return $result;
     }
 
+
+    //сделать методы
+    public static function unzipFile($object) {
+
+    }
+
+    public static function getFilenameWithoutHash($fileaddr) {
+
+    }
+
 }

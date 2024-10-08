@@ -110,10 +110,14 @@ class FileStorage implements FileStorageInterface
      * Копирование файла.
      * @return string
      */
-    public function copy($object_to, $object_from) {
+    public function copy($object_to, $object_from, $remove = true) {
         if (copy($object_from, $object_to) === false) {
             return false;
         }
+        if ($remove) {
+            $this->delete($object_from);
+        }
+        $this->setFileRule($object_to);
         return $object_to;
     }
 

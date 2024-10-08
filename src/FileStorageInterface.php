@@ -51,4 +51,8 @@ interface FileStorageInterface {
      * @return string
      */
     public function getUrl($object);
+
+    public static function unzipFile($object);
+
+    public static function getFilenameWithoutHash($fileaddr);
 }
